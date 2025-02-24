@@ -1,0 +1,22 @@
+calibration:
+  path: "./calib_data"
+  transformation_file: "transformation_mtx.txt"
+
+processing:
+  target_sensor: 1
+  max_devices: 2
+  max_queue_size: 5
+  min_depth: 20  # in mm
+  max_depth: 10000  # in mm
+
+saving:
+  enable_saving: false
+  save_directory: "./output"
+  save_frequency: 10
+
+visualization:
+  window_name: "Online Point Cloud"
+  window_width: 640
+  window_height: 480
+  point_size: 0.2
+  ESC_key: 27

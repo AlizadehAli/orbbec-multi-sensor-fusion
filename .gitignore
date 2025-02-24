@@ -1,0 +1,24 @@
+# Ignore calibration data
+calib_data/
+*.ply
+*.pcd
+
+# Ignore generated transformation and results
+tr_rot.txt
+transformation_mtx.txt
+Orbbec_merged.ply
+
+# Ignore Python cache and environment files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+.env
+
+# Ignore generated files
+*.jpg
+*.png
+*.bmp
+*.log
+*.txt
