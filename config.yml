@@ -10,7 +10,8 @@ processing:
   max_depth: 10000  # in mm
 
 saving:
-  enable_saving: false
+  enable_saving: False
+  save_pointcloud: True
   save_directory: "./output"
   save_frequency: 10
 

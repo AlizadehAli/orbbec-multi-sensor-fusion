@@ -79,6 +79,7 @@ def main(cfg: dict):
     render_option.point_size = cfg['visualization']['point_size']
     pcds = {}  
     count = 0
+    save_count = 0
     while True:
         for i, pipeline in enumerate(pipelines):
             loop_start = time.time()
@@ -119,10 +120,12 @@ def main(cfg: dict):
                     depth_image = cv2.normalize(depth_data, None, 0, 255, cv2.NORM_MINMAX)
                     depth_image = cv2.applyColorMap(depth_image.astype(np.uint8), cv2.COLORMAP_JET)
                     combined = cv2.addWeighted(color_image, 0.5, depth_image, 0.5, 0)
-                    cv2.imwrite(os.path.join(cfg['saving']['save_directory'], f"color_{i}_{count}.png"), color_image)
-                    cv2.imwrite(os.path.join(cfg['saving']['save_directory'], f"depth_{i}_{count}.png"), depth_data)
-                    cv2.imwrite(os.path.join(cfg['saving']['save_directory'], f"depth_{i}_vis_{count}.png"), depth_image)
-                    cv2.imwrite(os.path.join(cfg['saving']['save_directory'], f"combined_{i}_{count}.png"), combined)
+                    cv2.imwrite(os.path.join(cfg['saving']['save_directory'], f"color_{i}_{(save_count-i)//2}.png"), color_image)
+                    cv2.imwrite(os.path.join(cfg['saving']['save_directory'], f"depth_{i}_{(save_count-i)//2}.png"), depth_data)
+                    cv2.imwrite(os.path.join(cfg['saving']['save_directory'], f"depth_{i}_vis_{(save_count-i)//2}.png"), depth_image)
+                    cv2.imwrite(os.path.join(cfg['saving']['save_directory'], f"combined_{i}_{(save_count-i)//2}.png"), combined)
+                    if not cfg['saving']['save_pointcloud']:
+                        save_count+=1
 
             scale = depth_frame_aligned.get_depth_scale()
             point_format = OBFormat.RGB_POINT if has_color_sensor else OBFormat.POINT
@@ -139,10 +142,12 @@ def main(cfg: dict):
 
             pcd = convert_to_o3d_point_cloud(points_array, colors_array)
             if cfg['saving']['enable_saving']:
-                if np.mod(count, cfg['saving']['save_frequency']) == 0:
-                    file_name = os.path.join(cfg['saving']['save_directory'], f"point_cloud_{i}_{count}.ply")
-                    o3d.io.write_point_cloud(file_name, pcd)
-                    print(f"Point cloud saved to: {file_name}")
+                if cfg['saving']['save_pointcloud']:
+                    if np.mod(count, cfg['saving']['save_frequency']) == 0:
+                        file_name = os.path.join(cfg['saving']['save_directory'], f"point_cloud_{i}_{(save_count-i)//2}.ply")
+                        o3d.io.write_point_cloud(file_name, pcd)
+                        print(f"Point cloud saved to: {file_name}")
+                        save_count+=1
 
             if i == cfg['processing']['target_sensor']:
                 pcd.transform(T)
